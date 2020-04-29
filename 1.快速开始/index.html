@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>加载天地图dom</title>
+    <link rel="stylesheet" href="../cesium/Cesium/Widgets/widgets.css">
+    <script src="../cesium/Cesium/Cesium.js"></script>
+    <!-- <script src="./lib/viewerCesiumNavigationMixin.js"></script> -->
+    <style>
+        html,
+        body,
+        #cesiumContainer {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="cesiumContainer"></div>
+    <script>
+        var div = document.createElement("div");//创建一个DIV
+        div.id = 'creditContainer';
+        div.style.display = "none";
+        document.body.appendChild(div); //主要加上这句，把新建的DIV加到页面上
+
+        let option = {
+            animation: false, //是否创建动画小器件，左下角仪表
+            baseLayerPicker: true, //是否显示图层选择器
+            fullscreenButton: true, //是否显示全屏按钮
+            geocoder: false, //是否显示geocoder小器件，右上角查询按钮
+            homeButton: false, //是否显示Home按钮
+            infoBox: false, //是否显示信息框
+            selectionIndicator: false, //是否显示选取指示器组件
+            timeline: false, //是否显示时间轴
+            navigationHelpButton: false, //是否显示右上角的帮助按钮
+            showRenderLoopErrors: true, //如果设为true，将在一个HTML面板中显示错误信息
+            contextOptions: {
+                webgl: {
+                    preserveDrawingBuffer: true //保留绘图缓冲，场景截图需要设置为true才能获取到canvas内容
+                }
+            }, //传递给Scene对象的上下文参数（scene.options）
+            sceneModePicker: false, //是否显示3D/2D选择器
+            scene3DOnly: true, //如果设置为true，则所有几何图形以3D模式绘制以节约GPU资源
+            creditContainer: "creditContainer",
+            imageryProvider: new Cesium.SingleTileImageryProvider({
+                url: "./img/worldimage.jpg"
+            }),
+            terrainProvider: null
+        };
+        let viewer = new Cesium.Viewer("cesiumContainer", option);
+
+    </script>
+</body>
+
+</html>
