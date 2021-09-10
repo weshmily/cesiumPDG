@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>加载天地图dom</title>
+    <link rel="stylesheet" href="../Cesium/Widgets/widgets.css">
+    <script src="../Cesium/Cesium.js"></script>
+    <script src="./measure.js"></script>
+    <style>
+        html,
+        body,
+        #cesiumContainer {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="cesiumContainer"></div>
+    <script>
+        Cesium.Ion.defaultAccessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJlYWM2YzJhYS0zODQyLTQ3MjQtODg0Zi1lYTU5NDdmZWQ2YjYiLCJpZCI6ODgxNCwic2NvcGVzIjpbImFzciIsImdjIl0sImlhdCI6MTU1Mjg3ODA3OX0.ClloG_B1or75mHUegdkGtN2QY0AOyzJtRC3o6AMlYaM"
+
+        let viewer = new Cesium.Viewer("cesiumContainer", {
+            terrainProvider: Cesium.createWorldTerrain()
+        });
+
+
+
+        let MeasureTools = new Measure(viewer)//测量类
+        MeasureTools.measurePolyLine(function(){
+            //测量完成回调函数
+        })//直线距离量测
+
+        // MeasureTools.measurePolygon(function () {
+        //     //测量完成回调函数
+        // })//面积测量
+
+        // MeasureTools.measureHeight(function () {
+        //     //测量完成回调函数
+        // })//高度测量
+
+        // MeasureTools.destroy(function(){
+        //       //测量完成回调函数
+        //   })//清除量算结果
+
+    </script>
+</body>
+
+</html>
