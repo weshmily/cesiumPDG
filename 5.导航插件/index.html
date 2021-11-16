@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>导航插件</title>
+    <link rel="stylesheet" href="../Cesium/Widgets/widgets.css">
+    <script src="../Cesium/Cesium.js"></script>
+    <script src="../Plugin/viewerCesiumNavigationMixin.min.js"></script>
+    <style>
+        html,
+        body,
+        #cesiumContainer {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="cesiumContainer"></div>
+    <script>
+        let viewer = new Cesium.Viewer("cesiumContainer", {
+            terrainProvider: Cesium.createWorldTerrain()
+        });
+        viewer.extend(Cesium.viewerCesiumNavigationMixin, {});
+    </script>
+</body>
+
+</html>
