@@ -1,7 +1,7 @@
 /**
  * 测量线段
  */
- class Measure {
+ export class S_Measure {
     constructor(viewer) {
         this.viewer = viewer
         this.entityCollection = []
@@ -42,10 +42,10 @@
         // 注册鼠标左击事件
         this.viewer.screenSpaceEventHandler.setInputAction((clickEvent) => {
             var cartesian = this.viewer.scene.pickPosition(clickEvent.position); // 坐标
-            //var cartesian = this.viewer.scene.globe.pick(this.viewer.camera.getPickRay(clickEvent.position), this.viewer.scene);
+            // var cartesian = this.viewer.scene.globe.pick(this.viewer.camera.getPickRay(clickEvent.position), this.viewer.scene);
             // 存储第一个点
             console.log(cartesian)
-            if(!cartesian){
+            if (!cartesian) {
                 return false;
             }
             if (positions.length == 0) {
@@ -55,11 +55,11 @@
 
                 // 注册鼠标移动事件
                 this.viewer.screenSpaceEventHandler.setInputAction((moveEvent) => {
-                    //var movePosition = this.viewer.scene.pickPosition(moveEvent.endPosition); // 鼠标移动的点
-                    var movePosition = this.viewer.scene.globe.pick(this.viewer.camera.getPickRay(moveEvent.endPosition), this.viewer.scene);
+                    var movePosition = this.viewer.scene.pickPosition(moveEvent.endPosition); // 鼠标移动的点
+                    // var movePosition = this.viewer.scene.globe.pick(this.viewer.camera.getPickRay(moveEvent.endPosition), this.viewer.scene);
 
 
-                    if(!movePosition){
+                    if (!movePosition) {
                         return false;
                     }
                     if (positions.length == 2) {
@@ -118,15 +118,16 @@
         var positions = [];
         var clickStatus = false;
         var labelEntity = null;
+        this.viewer.scene.globe.depthTestAgainstTerrain = false;
 
         this.viewer.screenSpaceEventHandler.setInputAction((clickEvent) => {
 
             clickStatus = true;
-            // var cartesian = viewer.scene.pickPosition(clickEvent.position);
+            // var cartesian = this.viewer.scene.pickPosition(clickEvent.position);
             var cartesian = this.viewer.scene.globe.pick(this.viewer.camera.getPickRay(clickEvent.position), this.viewer.scene);
             // console.log(cartesian);
 
-            if(!cartesian){
+            if (!cartesian) {
                 return false
             }
             if (positions.length == 0) {
@@ -134,10 +135,10 @@
                 this.addPoint(cartesian);
 
                 this.viewer.screenSpaceEventHandler.setInputAction((moveEvent) => {
-                    // var movePosition = viewer.scene.pickPosition(moveEvent.endPosition);
+                    // var movePosition = this.viewer.scene.pickPosition(moveEvent.endPosition);
                     var movePosition = this.viewer.scene.globe.pick(this.viewer.camera.getPickRay(moveEvent.endPosition), this.viewer.scene);
                     // console.log(movePosition);
-                    if(!movePosition){
+                    if (!movePosition) {
                         return false;
                     }
                     if (positions.length == 1) {
@@ -172,7 +173,7 @@
 
 
             } else if (positions.length == 2) {
-                if(!cartesian){
+                if (!cartesian) {
                     return false
                 }
                 positions.pop();
@@ -185,10 +186,10 @@
                 // 右击结束
                 this.viewer.screenSpaceEventHandler.setInputAction((clickEvent) => {
 
-                    // var clickPosition = viewer.scene.pickPosition(clickEvent.position);
+                    // var clickPosition = this.viewer.scene.pickPosition(clickEvent.position);
                     var clickPosition = this.viewer.scene.globe.pick(this.viewer.camera.getPickRay(clickEvent.position), this.viewer.scene);
                     // console.log(clickPosition);
-                    if(!clickPosition){
+                    if (!clickPosition) {
                         return false;
                     }
                     positions.pop();
@@ -209,7 +210,7 @@
 
 
             } else if (positions.length >= 3) {
-                if(!cartesian){
+                if (!cartesian) {
                     return false
                 }
                 positions.pop();
@@ -235,9 +236,9 @@
             //var cartesian = this.viewer.scene.globe.pick(this.viewer.camera.getPickRay(clickEvent.position), this.viewer.scene);
 
             // 存储第一个点
-            
+
             if (positions.length == 0) {
-                if(!cartesian){
+                if (!cartesian) {
                     return false
                 }
                 positions.push(cartesian.clone());
@@ -247,7 +248,7 @@
                 this.viewer.screenSpaceEventHandler.setInputAction((moveEvent) => {
                     var movePosition = this.viewer.scene.pickPosition(moveEvent.endPosition); // 鼠标移动的点
                     //var movePosition = this.viewer.scene.globe.pick(this.viewer.camera.getPickRay(moveEvent.endPosition), this.viewer.scene);
-                    if(!movePosition){
+                    if (!movePosition) {
                         return false
                     }
                     if (positions.length >= 2) {
@@ -334,6 +335,7 @@
      * @param position
      */
     addPoint(position) {
+        console.log("position",position)
         this.entityCollection.push(this.viewer.entities.add(new Cesium.Entity({
             position: position,
             point: {
@@ -420,77 +422,35 @@
         return length;
     };
 
-    //计算多边形面积
     getArea(points) {
-
-        var radiansPerDegree = Math.PI / 180.0; //角度转化为弧度(rad)
-        var degreesPerRadian = 180.0 / Math.PI; //弧度转化为角度
-
-        /*角度*/
-        function Angle(p1, p2, p3) {
-            var bearing21 = Bearing(p2, p1);
-            var bearing23 = Bearing(p2, p3);
-            var angle = bearing21 - bearing23;
-            if (angle < 0) {
-                angle += 360;
-            }
-            return angle;
+        var ps = []
+        for (var i = 0; i < points.length; i++) {
+            var cartographic = Cesium.Ellipsoid.WGS84.cartesianToCartographic(points[i]);
+            var height = this.viewer.scene.globe.getHeight(cartographic);
+            var point = Cesium.Cartesian3.fromDegrees(cartographic.longitude / Math.PI * 180, cartographic.latitude / Math.PI * 180, height);
+            ps.push(point)
         }
-
-        /*方向*/
-        function Bearing(from, to) {
-            from = Cesium.Cartographic.fromCartesian(from);
-            to = Cesium.Cartographic.fromCartesian(to);
-
-            var lat1 = from.latitude;
-            var lon1 = from.longitude;
-            var lat2 = to.latitude;
-            var lon2 = to.longitude;
-            var angle = -Math.atan2(Math.sin(lon1 - lon2) * Math.cos(lat2), Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(lon1 - lon2));
-            if (angle < 0) {
-                angle += Math.PI * 2.0;
-            }
-            angle = angle * degreesPerRadian; //角度
-            return angle;
+        var s = 0;
+        for (var i = 0; i < ps.length; i++) {
+            var p1 = ps[i];
+            var p2;
+            if (i < ps.length - 1)
+                p2 = ps[i + 1];
+            else
+                p2 = ps[0];
+            s += p1.x * p2.y - p2.x * p1.y;
         }
+        var res
 
-        function distance(point1, point2) {
-            var point1cartographic = Cesium.Cartographic.fromCartesian(point1);
-            var point2cartographic = Cesium.Cartographic.fromCartesian(point2);
-            /**根据经纬度计算出距离**/
-            var geodesic = new Cesium.EllipsoidGeodesic();
-            geodesic.setEndPoints(point1cartographic, point2cartographic);
-            var s = geodesic.surfaceDistance;
-            //console.log(Math.sqrt(Math.pow(distance, 2) + Math.pow(endheight, 2)));
-            //返回两点之间的距离
-            s = Math.sqrt(Math.pow(s, 2) + Math.pow(point2cartographic.height - point1cartographic.height, 2));
-            return s;
-        }
-
-        var res = 0;
-        //拆分三角曲面
-
-        for (var i = 0; i < points.length - 2; i++) {
-            var j = (i + 1) % points.length;
-            var k = (i + 2) % points.length;
-            var totalAngle = Angle(points[i], points[j], points[k]);
-
-
-            var dis_temp1 = distance(points[j], points[0]);
-            var dis_temp2 = distance(points[k], points[0]);
-            res += dis_temp1 * dis_temp2 * Math.sin(totalAngle) / 2;
-            // console.log(res);
-        }
-
-        if (res < 1000000) {
-            res = Math.abs(res).toFixed(4) + " 平方米";
+        if (s < 1000000) {
+            res = Math.abs(s).toFixed(4) + " 平方米";
         } else {
-            res = Math.abs((res / 1000000.0).toFixed(4)) + " 平方公里";
+            res = Math.abs((s / 1000000.0).toFixed(4)) + " 平方公里";
         }
 
         return res;
+    }
 
-    };
 
     /**
      * 计算多边形的中心（简单的处理）
