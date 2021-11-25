@@ -24,7 +24,8 @@
 <body>
     <div id="cesiumContainer"></div>
     <script>
-        Cesium.Ion.defaultAccessToken = "你的token"
+        Cesium.Ion.defaultAccessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI1ZWFlNzk1ZS0yNWRjLTRlMzUtYmUxNi1jMTJjM2RhMGI0MWEiLCJpZCI6ODgxNCwiaWF0IjoxNjM3ODA4NTk4fQ.4YrCdIO5VncCBrcDETOd3Uj_b9sSMUINHzjChGNPCf0"
+
 
         let viewer = new Cesium.Viewer("cesiumContainer", {
             terrainProvider: Cesium.createWorldTerrain()
@@ -33,7 +34,7 @@
 
 
         let MeasureTools = new Measure(viewer)//测量类
-        MeasureTools.measurePolyLine(function(){
+        MeasureTools.measurePolyLine(function () {
             //测量完成回调函数
         })//直线距离量测
 
