@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>航迹模拟</title>
+    <link rel="stylesheet" href="../Cesium/Widgets/widgets.css">
+    <script src="../Cesium/Cesium.js"></script>
+    <script src="./track.js"></script>
+    <style>
+        html,
+        body,
+        #cesiumContainer {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="cesiumContainer"></div>
+    <script>
+        Cesium.Ion.defaultAccessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI1ZWFlNzk1ZS0yNWRjLTRlMzUtYmUxNi1jMTJjM2RhMGI0MWEiLCJpZCI6ODgxNCwiaWF0IjoxNjM3ODA4NTk4fQ.4YrCdIO5VncCBrcDETOd3Uj_b9sSMUINHzjChGNPCf0"
+
+
+        let viewer = new Cesium.Viewer("cesiumContainer", {
+            terrainProvider: Cesium.createWorldTerrain()
+        });
+
+        var b = [{
+            "shootId": 1, // 拍摄点ID
+            "aircraftAltitude": 294.4321622812281, // 无人机高度
+            "aircraftLatitude": 29.332291372123606, // 无人机纬度
+            "aircraftLongitude": 106.3275423851136, // 无人机经度
+            "gimbalPitchValue": -34.86589098646805, // 无人机云台俯仰角
+            "gimbalYawValue": -141.52559172027878, // 无人机云台偏航角
+            "isShoot": false // 是否为拍摄点
+        },
+        {
+            "shootId": 2,
+            "aircraftAltitude": 296.4321622812281,
+            "aircraftLatitude": 29.33218636728018,
+            "aircraftLongitude": 106.3274449132526,
+            "gimbalPitchValue": -29.77056379217234,
+            "gimbalYawValue": -141.52559171972544,
+            "isShoot": true
+        },
+        {
+            "shootId": 3,
+            "aircraftAltitude": 296.4321622812281,
+            "aircraftLatitude": 29.332086291515342,
+            "aircraftLongitude": 106.32743456106668,
+            "gimbalPitchValue": -49.79999923706055,
+            "gimbalYawValue": -143.6999969482422,
+            "isShoot": true
+        },
+        {
+            "shootId": 4,
+            "aircraftAltitude": 273.1146622812281,
+            "aircraftLatitude": 29.3320829466482,
+            "aircraftLongitude": 106.32743569795478,
+            "gimbalPitchValue": 0,
+            "gimbalYawValue": -96.52559172238325,
+            "isShoot": true
+        },
+
+        ]
+
+        /**
+     * @param {*} viewer 
+     * @param {*} options.speed 速度m/s 
+     * @param {*} options.stayTime 拍摄点等待时间  
+     * @param {*} options.Lines  点集合 
+     * @param {*} options.frustumFar  视锥长度 
+     * @param {*} options.shootCallback  拍摄点回调函数返回isShoot为true的shootId
+     * @memberof Track
+     */
+        let roaming = new Track(viewer, {
+            Lines: b,
+            stayTime: 1,
+            speed: 3,
+            frustumFar: 10,
+            shootCallback: function (shootId) {
+                console.log(shootId)
+            }
+        })
+
+        setTimeout(function () {
+
+            /**
+             *航迹模拟开始飞行
+             * @memberof roaming.StartFlying()
+             */
+
+            roaming.StartFlying()
+
+            /**
+             *航迹模拟的暂停和继续
+             *
+             * @param {*} state bool类型 false为暂停，ture为继续
+             * @memberof roaming.PauseOrContinue(state)
+             */
+
+            //roaming.PauseOrContinue(true)//false为暂停，ture为继续
+
+            /**
+             *改变飞行的速度
+             *
+             * @param {*} value  整数类型 建议（1-20）
+             * @memberof roaming.ChangeRoamingSpeed(value)
+             */
+
+            //roaming.ChangeRoamingSpeed(1)
+
+
+            /**
+             * 改变观看角度
+             *
+             * @param {*} name string 
+             * 
+             * ViewTopDown:顶视图
+             * ViewSide ：正视图
+             * trackedEntity：跟随模型
+             * 
+             * @memberof ChangePerspective(name)
+             */
+
+            roaming.ChangePerspective("trackedEntity")
+
+            /**
+             *取消航迹模拟
+             *
+             * @memberof roaming.EndRoaming()
+             */
+
+            //roaming.EndRoaming()
+
+
+        }, 7000)
+
+
+
+
+
+    </script>
+</body>
+
+</html>
